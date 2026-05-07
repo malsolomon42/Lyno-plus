@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Science News"
+version = "1.0.0"
+id = "artifacts/science-news"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26244
+
+[services.development]
+run = "pnpm --filter @workspace/science-news run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/science-news", "run", "build" ]
+publicDir = "artifacts/science-news/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26244"
+BASE_PATH = "/"
