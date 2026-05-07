@@ -1,16 +1,45 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useArticles, useBlogs, Article } from "@/hooks/use-space-news";
+import { useDevToArticles } from "@/hooks/use-tech-news";
 import { ArticleGrid } from "@/components/article-grid";
+import { TechCard } from "@/components/tech-card";
 import { Newsletter } from "@/components/newsletter";
 import { SpaceFacts } from "@/components/space-facts";
 import { PollWidget } from "@/components/poll-widget";
 import { SupportCta } from "@/components/support-cta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe } from "lucide-react";
+import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe, Cpu } from "lucide-react";
 import { motion } from "framer-motion";
 import { differenceInHours } from "date-fns";
+
+function TechHomeFeed() {
+  const { data, isLoading } = useDevToArticles(undefined, 6);
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="bg-card border border-white/5 rounded-xl overflow-hidden">
+            <div className="aspect-video bg-muted/40 animate-pulse" />
+            <div className="p-4 space-y-2">
+              <div className="h-3 bg-muted/40 rounded animate-pulse w-24" />
+              <div className="h-4 bg-muted/40 rounded animate-pulse" />
+              <div className="h-4 bg-muted/40 rounded animate-pulse w-3/4" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {(data || []).map((article, i) => (
+        <TechCard key={article.id} article={article} index={i} />
+      ))}
+    </div>
+  );
+}
 
 const CATEGORIES_QUICK = [
   { name: "Launches", icon: Rocket, href: "/category/Launches" },
@@ -170,6 +199,25 @@ export default function Home() {
 
       {/* Space Facts */}
       <SpaceFacts />
+
+      {/* Tech & Innovation Section */}
+      <section className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+          <div className="flex items-center gap-3">
+            <Cpu className="w-6 h-6 text-cyan-400" />
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Tech & Innovation</h2>
+            <span className="text-xs font-mono text-muted-foreground border border-white/10 px-2 py-0.5 rounded-full">
+              dev.to
+            </span>
+          </div>
+          <Link href="/tech">
+            <Button variant="ghost" size="sm" className="gap-1.5 rounded-full text-muted-foreground hover:text-primary text-sm">
+              View All <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </Link>
+        </div>
+        <TechHomeFeed />
+      </section>
 
       {/* Community Poll */}
       <PollWidget />

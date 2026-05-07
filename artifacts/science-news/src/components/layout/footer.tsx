@@ -2,24 +2,27 @@ import { Link } from "wouter";
 import { Rocket, Github, Twitter } from "lucide-react";
 
 const FOOTER_LINKS = {
-  Explore: [
+  "Space News": [
     { label: "Latest News", href: "/" },
-    { label: "Launches", href: "/category/Launches" },
+    { label: "Countdowns", href: "/launches" },
     { label: "Mars", href: "/category/Mars" },
     { label: "Moon", href: "/category/Moon" },
     { label: "Deep Space", href: "/category/Deep Space" },
-    { label: "Technology", href: "/category/Technology" },
-  ],
-  Discover: [
-    { label: "Explore All Topics", href: "/explore" },
     { label: "Astronomy", href: "/category/Astronomy" },
-    { label: "Satellites", href: "/category/Satellites" },
-    { label: "Science", href: "/category/Science" },
-    { label: "Search", href: "/search" },
   ],
-  Company: [
-    { label: "About CosmosWire", href: "/about" },
+  "Tech & Science": [
+    { label: "Tech & Innovation", href: "/tech" },
+    { label: "AI & Machine Learning", href: "/tech?tab=ai" },
+    { label: "Computer Science", href: "/tech?tab=cs" },
+    { label: "Web & Software", href: "/tech?tab=web" },
+    { label: "Science & Research", href: "/tech?tab=science" },
+  ],
+  lyno: [
+    { label: "Explore All Topics", href: "/explore" },
+    { label: "About lyno+", href: "/about" },
+    { label: "Support Us", href: "/support" },
     { label: "Saved Articles", href: "/bookmarks" },
+    { label: "Search", href: "/search" },
   ],
 };
 

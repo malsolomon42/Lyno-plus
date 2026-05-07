@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, Search, Rocket, Bookmark, Menu, X, Compass, Info, Heart } from "lucide-react";
+import { Moon, Sun, Search, Rocket, Bookmark, Menu, X, Compass, Info, Heart, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import { useBookmarks } from "@/hooks/use-bookmarks";
@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { href: "/category/Mars", label: "Mars" },
   { href: "/category/Moon", label: "Moon" },
   { href: "/category/Deep Space", label: "Deep Space" },
-  { href: "/category/Technology", label: "Technology" },
+  { href: "/tech", label: "Tech & Science", icon: Cpu },
   { href: "/explore", label: "Explore", icon: Compass },
   { href: "/about", label: "About", icon: Info },
 ];
