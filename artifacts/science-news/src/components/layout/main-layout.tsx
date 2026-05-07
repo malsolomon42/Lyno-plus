@@ -2,6 +2,7 @@ import { Navbar } from "./navbar";
 import { Footer } from "./footer";
 import { NewsTicker } from "@/components/news-ticker";
 import { BackToTop } from "@/components/back-to-top";
+import { SupportWidget } from "@/components/support-widget";
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       </main>
       <Footer />
       <BackToTop />
+      <SupportWidget />
     </div>
   );
 }

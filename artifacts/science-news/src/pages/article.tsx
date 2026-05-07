@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRoute, Link } from "wouter";
 import { useArticle, useRelatedArticles } from "@/hooks/use-space-news";
 import { format, differenceInHours } from "date-fns";
@@ -8,7 +9,11 @@ import { ArrowLeft, ExternalLink, Calendar, Newspaper, Rocket, Bookmark, Clock }
 import { motion } from "framer-motion";
 import { ReadingProgress } from "@/components/reading-progress";
 import { ShareButtons } from "@/components/share-buttons";
+import { ArticleReactions } from "@/components/article-reactions";
+import { ArticleComments } from "@/components/article-comments";
+import { SupportCta } from "@/components/support-cta";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { useArticleReads } from "@/hooks/use-engagement";
 import { ArticleCard } from "@/components/article-card";
 
 function getReadingTime(text: string): number {
@@ -21,12 +26,14 @@ export default function ArticleDetail() {
   const id = params?.id || "";
 
   const { data: article, isLoading, error } = useArticle(id);
-  const { data: relatedData } = useRelatedArticles(
-    article?.news_site || "",
-    article?.id || 0
-  );
+  const { data: relatedData } = useRelatedArticles(article?.news_site || "", article?.id || 0);
   const { isBookmarked, toggleBookmark } = useBookmarks();
+  const { markRead } = useArticleReads();
   const bookmarked = article ? isBookmarked(article.id) : false;
+
+  useEffect(() => {
+    if (article?.id) markRead(article.id);
+  }, [article?.id, markRead]);
 
   if (isLoading) {
     return (
@@ -49,9 +56,7 @@ export default function ArticleDetail() {
       <div className="container mx-auto px-4 py-20 text-center" data-testid="article-error">
         <h2 className="text-2xl font-bold mb-4">Transmission Lost</h2>
         <p className="text-muted-foreground mb-8">We couldn't retrieve this article.</p>
-        <Link href="/">
-          <Button variant="outline" className="rounded-full">Return to Base</Button>
-        </Link>
+        <Link href="/"><Button variant="outline" className="rounded-full">Return to Base</Button></Link>
       </div>
     );
   }
@@ -75,19 +80,10 @@ export default function ArticleDetail() {
         </div>
 
         <div className="container mx-auto px-4 max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-6"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
             <div className="flex flex-wrap gap-3 items-center">
-              {isBreaking && (
-                <Badge variant="destructive" className="animate-pulse">Breaking</Badge>
-              )}
-              <Badge
-                variant="secondary"
-                className="px-3 py-1 text-sm bg-primary/20 text-primary hover:bg-primary/30 border-none"
-              >
+              {isBreaking && <Badge variant="destructive" className="animate-pulse">Breaking</Badge>}
+              <Badge variant="secondary" className="px-3 py-1 text-sm bg-primary/20 text-primary hover:bg-primary/30 border-none">
                 <Newspaper className="w-3 h-3 mr-2" />
                 {article.news_site}
               </Badge>
@@ -104,9 +100,7 @@ export default function ArticleDetail() {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`ml-auto rounded-full gap-2 border border-white/10 ${
-                  bookmarked ? "text-primary border-primary/30 bg-primary/10" : "text-muted-foreground"
-                }`}
+                className={`ml-auto rounded-full gap-2 border border-white/10 ${bookmarked ? "text-primary border-primary/30 bg-primary/10" : "text-muted-foreground"}`}
                 onClick={() => toggleBookmark(article)}
                 data-testid="btn-bookmark-article"
               >
@@ -138,12 +132,7 @@ export default function ArticleDetail() {
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-8 border-t border-white/10">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-full"
-                data-testid="btn-read-full"
-              >
+              <Button asChild size="lg" className="rounded-full" data-testid="btn-read-full">
                 <a href={article.url} target="_blank" rel="noopener noreferrer">
                   Read Full Article at Source
                   <ExternalLink className="w-4 h-4 ml-2" />
@@ -162,19 +151,24 @@ export default function ArticleDetail() {
                   Related Missions & Events
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {article.launches.map((launch) => (
-                    <Badge key={launch.id} variant="outline" className="bg-background">
-                      Launch: {launch.provider}
-                    </Badge>
+                  {article.launches.map(launch => (
+                    <Badge key={launch.id} variant="outline" className="bg-background">Launch: {launch.provider}</Badge>
                   ))}
-                  {article.events.map((event) => (
-                    <Badge key={event.id} variant="outline" className="bg-background">
-                      Event: {event.provider}
-                    </Badge>
+                  {article.events.map(event => (
+                    <Badge key={event.id} variant="outline" className="bg-background">Event: {event.provider}</Badge>
                   ))}
                 </div>
               </div>
             )}
+
+            {/* Reactions */}
+            <ArticleReactions articleId={article.id} />
+
+            {/* Support CTA */}
+            <SupportCta />
+
+            {/* Comments */}
+            <ArticleComments articleId={article.id} />
           </motion.div>
         </div>
 

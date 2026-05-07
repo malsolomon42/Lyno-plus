@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, Search, Rocket, Bookmark, Menu, X, Compass, Info } from "lucide-react";
+import { Moon, Sun, Search, Rocket, Bookmark, Menu, X, Compass, Info, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { ReadingStreak } from "@/components/reading-streak";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
@@ -48,26 +49,31 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1">
+          <ReadingStreak />
+
           <Link href="/search" data-testid="link-search">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground rounded-full"
-            >
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
               <Search className="w-5 h-5" />
             </Button>
           </Link>
 
           <Link href="/bookmarks" data-testid="link-bookmarks">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-foreground rounded-full relative"
-            >
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full relative">
               <Bookmark className="w-5 h-5" />
               {bookmarks.length > 0 && (
                 <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
               )}
+            </Button>
+          </Link>
+
+          <Link href="/support" data-testid="link-support-nav">
+            <Button
+              size="sm"
+              className="hidden sm:flex rounded-full h-8 px-3 gap-1.5 bg-primary/15 hover:bg-primary/25 text-primary border border-primary/30 text-xs font-semibold"
+              variant="ghost"
+            >
+              <Heart className="w-3.5 h-3.5" />
+              Support
             </Button>
           </Link>
 
@@ -125,6 +131,15 @@ export function Navbar() {
                     {bookmarks.length}
                   </span>
                 )}
+              </Link>
+              <Link
+                href="/support"
+                className="px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors flex items-center gap-2"
+                onClick={() => setMobileOpen(false)}
+                data-testid="link-mobile-support"
+              >
+                <Heart className="w-4 h-4" />
+                Support CosmosWire
               </Link>
             </nav>
           </motion.div>

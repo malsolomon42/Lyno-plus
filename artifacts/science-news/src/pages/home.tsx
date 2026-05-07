@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useArticles, useBlogs } from "@/hooks/use-space-news";
+import { useArticles, useBlogs, Article } from "@/hooks/use-space-news";
 import { ArticleGrid } from "@/components/article-grid";
 import { Newsletter } from "@/components/newsletter";
 import { SpaceFacts } from "@/components/space-facts";
+import { PollWidget } from "@/components/poll-widget";
+import { SupportCta } from "@/components/support-cta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe } from "lucide-react";
@@ -20,40 +22,38 @@ const CATEGORIES_QUICK = [
 const PAGE_SIZE = 12;
 
 export default function Home() {
-  const [page, setPage] = useState(0);
-  const [allArticles, setAllArticles] = useState<import("@/hooks/use-space-news").Article[]>([]);
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [extraArticles, setExtraArticles] = useState<Article[]>([]);
+  const [offset, setOffset] = useState(PAGE_SIZE + 1);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  const { data: articlesData, isLoading: articlesLoading } = useArticles({
-    limit: PAGE_SIZE + 1,
-    offset: 0,
-  });
+  const { data: articlesData, isLoading: articlesLoading } = useArticles({ limit: PAGE_SIZE + 1, offset: 0 });
   const { data: blogsData, isLoading: blogsLoading } = useBlogs({ limit: 6 });
-  const { data: moreData, isLoading: moreLoading } = useArticles({
-    limit: PAGE_SIZE,
-    offset: PAGE_SIZE + 1 + page * PAGE_SIZE,
-  });
 
   const firstPageArticles = articlesData?.results || [];
-  const featuredArticle = firstPageArticles.length > 0 ? firstPageArticles[0] : null;
-  const gridArticles = firstPageArticles.length > 1 ? firstPageArticles.slice(1) : [];
+  const featuredArticle = firstPageArticles[0] ?? null;
+  const gridArticles = firstPageArticles.slice(1);
+  const allGridArticles = [...gridArticles, ...extraArticles];
 
-  const handleLoadMore = () => {
-    const newItems = moreData?.results || [];
-    setAllArticles(prev => {
-      const ids = new Set(prev.map(a => a.id));
-      return [...prev, ...newItems.filter(a => !ids.has(a.id))];
-    });
-    setPage(p => p + 1);
-    setHasLoaded(true);
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const res = await fetch(
+        `https://api.spaceflightnewsapi.net/v4/articles/?limit=${PAGE_SIZE}&offset=${offset}&ordering=-published_at`
+      );
+      const data = await res.json();
+      const newItems: Article[] = data.results || [];
+      const existingIds = new Set(allGridArticles.map(a => a.id));
+      setExtraArticles(prev => [...prev, ...newItems.filter(a => !existingIds.has(a.id))]);
+      setOffset(o => o + PAGE_SIZE);
+    } catch {
+    } finally {
+      setLoadingMore(false);
+    }
   };
-
-  const allGridArticles = [...gridArticles, ...allArticles];
-  const hasMore = moreData?.next !== null || !hasLoaded;
 
   return (
     <div className="flex flex-col gap-16 pb-20">
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="relative min-h-[80vh] flex items-end pb-16 pt-32">
         {featuredArticle ? (
           <>
@@ -79,22 +79,14 @@ export default function Home() {
               >
                 <div className="flex items-center gap-3 mb-6">
                   {differenceInHours(new Date(), new Date(featuredArticle.published_at)) < 24 && (
-                    <Badge
-                      variant="destructive"
-                      className="animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)]"
-                    >
+                    <Badge variant="destructive" className="animate-pulse shadow-[0_0_15px_rgba(220,38,38,0.5)]">
                       Breaking
                     </Badge>
                   )}
-                  <Badge
-                    variant="outline"
-                    className="bg-background/50 backdrop-blur-md border-white/20"
-                  >
+                  <Badge variant="outline" className="bg-background/50 backdrop-blur-md border-white/20">
                     Featured
                   </Badge>
-                  <span className="text-sm font-mono text-white/60">
-                    {featuredArticle.news_site}
-                  </span>
+                  <span className="text-sm font-mono text-white/60">{featuredArticle.news_site}</span>
                 </div>
                 <h1
                   className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]"
@@ -106,11 +98,7 @@ export default function Home() {
                   {featuredArticle.summary}
                 </p>
                 <Link href={`/article/${featuredArticle.id}`}>
-                  <Button
-                    size="lg"
-                    className="rounded-full font-semibold group"
-                    data-testid="btn-hero-read"
-                  >
+                  <Button size="lg" className="rounded-full font-semibold group" data-testid="btn-hero-read">
                     Read Full Story
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -126,7 +114,7 @@ export default function Home() {
       {/* Quick Category Chips */}
       <section className="container mx-auto px-4 -mt-6">
         <div className="flex flex-wrap gap-3" data-testid="quick-categories">
-          {CATEGORIES_QUICK.map((cat) => {
+          {CATEGORIES_QUICK.map(cat => {
             const Icon = cat.icon;
             return (
               <Link key={cat.name} href={cat.href}>
@@ -148,31 +136,27 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
           <Rocket className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Latest Transmissions
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Latest Transmissions</h2>
           <span className="ml-auto text-xs font-mono text-muted-foreground">
             {articlesData?.count ? `${articlesData.count.toLocaleString()} total` : ""}
           </span>
         </div>
-        <ArticleGrid
-          articles={allGridArticles}
-          isLoading={articlesLoading}
-          skeletonCount={12}
-        />
-
-        {!articlesLoading && hasMore && (
+        <ArticleGrid articles={allGridArticles} isLoading={articlesLoading} skeletonCount={12} />
+        {!articlesLoading && (
           <div className="flex justify-center mt-10">
             <Button
               variant="outline"
               size="lg"
               className="rounded-full border-white/20 gap-2 min-w-[180px]"
               onClick={handleLoadMore}
-              disabled={moreLoading}
+              disabled={loadingMore}
               data-testid="btn-load-more"
             >
-              {moreLoading ? (
-                <>Loading...</>
+              {loadingMore ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                  Loading...
+                </span>
               ) : (
                 <>
                   <ChevronDown className="w-4 h-4" />
@@ -184,8 +168,16 @@ export default function Home() {
         )}
       </section>
 
-      {/* Space Facts Widget */}
+      {/* Space Facts */}
       <SpaceFacts />
+
+      {/* Community Poll */}
+      <PollWidget />
+
+      {/* Support CTA */}
+      <section className="container mx-auto px-4">
+        <SupportCta />
+      </section>
 
       {/* Newsletter */}
       <Newsletter />
@@ -193,9 +185,7 @@ export default function Home() {
       {/* Mission Logs */}
       <section className="container mx-auto px-4 bg-muted/20 py-14 rounded-3xl border border-white/5">
         <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
-            Mission Logs
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Mission Logs</h2>
           <span className="text-xs text-muted-foreground font-mono">Community Blogs</span>
         </div>
         <ArticleGrid articles={blogsData?.results} isLoading={blogsLoading} skeletonCount={6} />
