@@ -41,7 +41,7 @@ export default function About() {
               <Rocket className="w-10 h-10 text-primary" />
             </div>
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-              About CosmosWire
+              About lyno+
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Your mission control for the universe. We aggregate the most important space
@@ -117,7 +117,7 @@ export default function About() {
             Earth's atmosphere.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            CosmosWire exists to make that possible. Free, fast, and focused on what matters:
+            lyno+ exists to make that possible. Free, fast, and focused on what matters:
             the story of us reaching for the stars.
           </p>
         </motion.div>

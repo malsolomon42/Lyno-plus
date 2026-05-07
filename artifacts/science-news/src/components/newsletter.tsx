@@ -13,10 +13,10 @@ export function Newsletter() {
     if (!email) return;
     try {
       const subscribers = JSON.parse(
-        localStorage.getItem("cosmoswire-subscribers") || "[]"
+        localStorage.getItem("lynoplus-subscribers") || "[]"
       );
       subscribers.push({ email, date: new Date().toISOString() });
-      localStorage.setItem("cosmoswire-subscribers", JSON.stringify(subscribers));
+      localStorage.setItem("lynoplus-subscribers", JSON.stringify(subscribers));
     } catch {
     }
     setSubmitted(true);

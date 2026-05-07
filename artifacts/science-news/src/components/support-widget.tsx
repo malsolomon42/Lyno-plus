@@ -34,7 +34,7 @@ export function SupportWidget() {
             <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
               <Heart className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="text-sm font-bold">Support CosmosWire</span>
+            <span className="text-sm font-bold">Support lyno+</span>
           </div>
 
           <p className="text-xs text-muted-foreground leading-relaxed mb-3">

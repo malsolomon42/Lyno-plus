@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Article } from "./use-space-news";
 
-const STORAGE_KEY = "cosmoswire-bookmarks";
+const STORAGE_KEY = "lynoplus-bookmarks";
 
 export function useBookmarks() {
   const [bookmarks, setBookmarks] = useState<Article[]>(() => {

@@ -19,7 +19,7 @@ export function SupportCta() {
         <Heart className="w-5 h-5 text-primary" />
       </div>
       <div className="flex-1 text-center sm:text-left">
-        <p className="font-semibold mb-0.5">Enjoying CosmosWire?</p>
+        <p className="font-semibold mb-0.5">Enjoying lyno+?</p>
         <p className="text-sm text-muted-foreground">
           We're {progress}% to our ${goal}/month goal — ${totalRaised} raised so far. Help keep this mission flying.
         </p>

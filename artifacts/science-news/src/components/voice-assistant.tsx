@@ -13,13 +13,13 @@ const COMMANDS_HELP = [
   { phrase: '"Go to launches"', desc: "Launch countdown page" },
   { phrase: '"Go home"', desc: "Home page" },
   { phrase: '"Go to explore"', desc: "Explore all topics" },
-  { phrase: '"Go to support"', desc: "Support CosmosWire" },
+  { phrase: '"Go to support"', desc: "Support lyno+" },
   { phrase: '"Stop" / "Cancel"', desc: "Stop all audio" },
   { phrase: '"Help"', desc: "List commands" },
 ];
 
 const GREETINGS = [
-  "CosmosWire assistant ready. What can I help you explore?",
+  "lyno plus assistant ready. What can I help you explore?",
   "Hello! I can read articles, navigate pages, and share news. What would you like?",
   "Mission control online. Ask me anything about today's space news.",
 ];
@@ -97,7 +97,7 @@ export function VoiceAssistant() {
           respond("Opening your saved articles.", () => navigate("/bookmarks"));
           break;
         case "about":
-          respond("CosmosWire is your mission control for space exploration news. We deliver real-time updates from the world's leading space agencies and science institutions.");
+          respond("lyno plus is your mission control for space exploration news. We deliver real-time updates from the world's leading space agencies and science institutions.");
           break;
         case "read":
           respond("To listen to an article, open any article and press the Play button in the Listen to Article section.");
@@ -220,7 +220,7 @@ export function VoiceAssistant() {
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-sm">CosmosWire AI</p>
+                  <p className="font-bold text-sm">lyno+ AI</p>
                   <p className="text-xs text-muted-foreground font-mono">Voice Assistant</p>
                 </div>
               </div>

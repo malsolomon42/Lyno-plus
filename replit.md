@@ -1,6 +1,6 @@
-# [Project name]
+# lyno+
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium space and science news website delivering real-time articles, launch countdowns, and an audio-interactive experience to a global audience.
 
 ## Run & Operate
 

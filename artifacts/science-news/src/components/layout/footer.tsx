@@ -33,11 +33,11 @@ export function Footer() {
               <div className="bg-primary/20 p-2 rounded-lg group-hover:bg-primary/30 transition-colors">
                 <Rocket className="w-5 h-5 text-primary" />
               </div>
-              <span className="font-mono text-xl font-bold tracking-tight">CosmosWire</span>
+              <span className="font-mono text-xl font-bold tracking-tight">lyno+</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-6">
               Your mission control for space exploration news. Real-time updates from the
-              world's leading space agencies and science institutions.
+              world's leading space agencies and science institutions. — lyno+
             </p>
             <div className="flex gap-3">
               <a
@@ -84,7 +84,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <span>&copy; {new Date().getFullYear()} CosmosWire. All rights reserved.</span>
+          <span>&copy; {new Date().getFullYear()} lyno+. All rights reserved.</span>
           <span>
             Powered by{" "}
             <a

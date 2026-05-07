@@ -86,7 +86,7 @@ export default function Support() {
               Support the Mission
             </h1>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-8">
-              CosmosWire is free for everyone, forever. Your support keeps our servers
+              lyno+ is free for everyone, forever. Your support keeps our servers
               running, our team caffeinated, and the cosmos covered.
             </p>
 
@@ -133,7 +133,7 @@ export default function Support() {
                 Your {selected.label} support of ${selected.amount} means the world to us.
               </p>
               <p className="text-muted-foreground mb-8">
-                You're now part of the CosmosWire mission. Ad astra!
+                You're now part of the lyno+ mission. Ad astra!
               </p>
               <Button
                 onClick={() => { setStep("select"); setName(""); setMessage(""); }}
