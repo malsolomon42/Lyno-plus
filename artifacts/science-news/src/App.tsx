@@ -10,6 +10,9 @@ import Home from "@/pages/home";
 import ArticleDetail from "@/pages/article";
 import Search from "@/pages/search";
 import Category from "@/pages/category";
+import BookmarksPage from "@/pages/bookmarks";
+import Explore from "@/pages/explore";
+import About from "@/pages/about";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +30,9 @@ function Router() {
       <Route path="/article/:id" component={ArticleDetail} />
       <Route path="/search" component={Search} />
       <Route path="/category/:category" component={Category} />
+      <Route path="/bookmarks" component={BookmarksPage} />
+      <Route path="/explore" component={Explore} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );
