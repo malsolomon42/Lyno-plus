@@ -8,7 +8,7 @@ import { ReadingStreak } from "@/components/reading-streak";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
-  { href: "/category/Launches", label: "Launches" },
+  { href: "/launches", label: "Countdowns" },
   { href: "/category/Mars", label: "Mars" },
   { href: "/category/Moon", label: "Moon" },
   { href: "/category/Deep Space", label: "Deep Space" },

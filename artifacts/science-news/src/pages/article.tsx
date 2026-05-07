@@ -9,6 +9,7 @@ import { ArrowLeft, ExternalLink, Calendar, Newspaper, Rocket, Bookmark, Clock }
 import { motion } from "framer-motion";
 import { ReadingProgress } from "@/components/reading-progress";
 import { ShareButtons } from "@/components/share-buttons";
+import { ArticleReader } from "@/components/article-reader";
 import { ArticleReactions } from "@/components/article-reactions";
 import { ArticleComments } from "@/components/article-comments";
 import { SupportCta } from "@/components/support-cta";
@@ -143,6 +144,13 @@ export default function ArticleDetail() {
                 url={typeof window !== "undefined" ? window.location.href : article.url}
               />
             </div>
+
+            {/* Article Reader (TTS) */}
+            <ArticleReader
+              title={article.title}
+              source={article.news_site}
+              summary={article.summary}
+            />
 
             {(article.launches.length > 0 || article.events.length > 0) && (
               <div className="bg-muted/30 border border-white/5 rounded-xl p-6">

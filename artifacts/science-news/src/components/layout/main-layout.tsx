@@ -3,6 +3,7 @@ import { Footer } from "./footer";
 import { NewsTicker } from "@/components/news-ticker";
 import { BackToTop } from "@/components/back-to-top";
 import { SupportWidget } from "@/components/support-widget";
+import { VoiceAssistant } from "@/components/voice-assistant";
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       <Footer />
       <BackToTop />
       <SupportWidget />
+      <VoiceAssistant />
     </div>
   );
 }

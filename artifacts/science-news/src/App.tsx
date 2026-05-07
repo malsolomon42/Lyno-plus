@@ -14,6 +14,7 @@ import BookmarksPage from "@/pages/bookmarks";
 import Explore from "@/pages/explore";
 import About from "@/pages/about";
 import Support from "@/pages/support";
+import Launches from "@/pages/launches";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/explore" component={Explore} />
       <Route path="/about" component={About} />
       <Route path="/support" component={Support} />
+      <Route path="/launches" component={Launches} />
       <Route component={NotFound} />
     </Switch>
   );
