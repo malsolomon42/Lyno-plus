@@ -46,14 +46,16 @@ export function VoiceAssistant() {
   const [transcript, setTranscript] = useState("");
   const [response, setResponse] = useState("");
   const [showHelp, setShowHelp] = useState(false);
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [recognition, setRecognition] = useState<any>(null);
   const [, navigate] = useLocation();
   const { speak, stop: stopTTS, supported: ttsSupported } = useTTS();
   const hasSpokenGreeting = useRef(false);
   const processingRef = useRef(false);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const SR = typeof window !== "undefined"
-    ? (window.SpeechRecognition || (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition)
+    ? ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)
     : null;
   const srSupported = !!SR;
 
@@ -123,9 +125,11 @@ export function VoiceAssistant() {
     rec.continuous = false;
 
     rec.onstart = () => setStatus("listening");
-    rec.onresult = (e: SpeechRecognitionEvent) => {
-      const interim = Array.from(e.results)
-        .map(r => r[0].transcript)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    rec.onresult = (e: any) => {
+      const interim = Array.from(e.results as any[])
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((r: any) => r[0].transcript)
         .join("");
       setTranscript(interim);
       if (e.results[e.results.length - 1].isFinal) {

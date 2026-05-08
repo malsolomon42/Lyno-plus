@@ -1,3 +1,62 @@
 <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="180" height="180" rx="36" fill="#FF3C00"/>
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+    @keyframes spin-rev {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(-360deg); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.15; }
+      50%       { opacity: 0.45; }
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.9; }
+      50%       { opacity: 0.6; }
+    }
+    .orbit-outer { transform-origin: 90px 90px; animation: spin 4s linear infinite; }
+    .orbit-inner { transform-origin: 90px 90px; animation: spin-rev 9s linear infinite; }
+    .glow        { animation: pulse 2.6s ease-in-out infinite; }
+    .text-mark   { animation: blink 2.6s ease-in-out infinite; }
+  </style>
+
+  <!-- Dark background -->
+  <rect width="180" height="180" rx="40" fill="#080C18"/>
+
+  <!-- Ambient core glow -->
+  <circle class="glow" cx="90" cy="90" r="54" fill="#3B82F6"/>
+
+  <!-- Outer orbit: dashed ring + planet -->
+  <g class="orbit-outer">
+    <circle cx="90" cy="90" r="70" stroke="#3B82F6" stroke-width="3" stroke-dasharray="11 22" fill="none" opacity="0.45"/>
+    <!-- Planet dot at top of ring -->
+    <circle cx="90" cy="20" r="9" fill="#3B82F6"/>
+    <!-- Planet glow -->
+    <circle cx="90" cy="20" r="15" fill="#3B82F6" opacity="0.2"/>
+  </g>
+
+  <!-- Inner orbit: smaller dashed -->
+  <g class="orbit-inner">
+    <circle cx="90" cy="90" r="46" stroke="#60A5FA" stroke-width="1.5" stroke-dasharray="5 16" fill="none" opacity="0.25"/>
+    <circle cx="90" cy="44" r="5" fill="#60A5FA" opacity="0.7"/>
+  </g>
+
+  <!-- Centre background circle -->
+  <circle cx="90" cy="90" r="36" fill="#080C18"/>
+  <circle cx="90" cy="90" r="36" stroke="#3B82F6" stroke-width="1.5" opacity="0.3" fill="none"/>
+
+  <!-- "L+" centre text -->
+  <text
+    class="text-mark"
+    x="90" y="90"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'Courier New', Courier, monospace"
+    font-size="52"
+    font-weight="900"
+    fill="#3B82F6"
+    letter-spacing="-2"
+  >L+</text>
 </svg>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, Search, Rocket, Bookmark, Menu, X, Compass, Info, Heart, Cpu } from "lucide-react";
+import { Moon, Sun, Search, Bookmark, Menu, X, Compass, Info, Heart, Cpu } from "lucide-react";
+import { AnimatedLogo } from "@/components/animated-logo";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import { useBookmarks } from "@/hooks/use-bookmarks";
@@ -27,11 +28,8 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group" data-testid="link-home">
-          <div className="bg-primary/20 p-2 rounded-lg group-hover:bg-primary/30 transition-colors">
-            <Rocket className="w-5 h-5 text-primary" />
-          </div>
-          <span className="font-mono text-xl font-bold tracking-tight">lyno+</span>
+        <Link href="/" data-testid="link-home">
+          <AnimatedLogo size="sm" showText={true} />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1 text-sm font-medium text-muted-foreground">
