@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { ReadingStreak } from "@/components/reading-streak";
+import { NotificationBell } from "@/components/notification-bell";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
@@ -50,6 +51,8 @@ export function Navbar() {
 
         <div className="flex items-center gap-1">
           <ReadingStreak />
+
+          <NotificationBell />
 
           <Link href="/search" data-testid="link-search">
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
@@ -139,7 +142,7 @@ export function Navbar() {
                 data-testid="link-mobile-support"
               >
                 <Heart className="w-4 h-4" />
-                Support CosmosWire
+                Support lyno+
               </Link>
             </nav>
           </motion.div>
