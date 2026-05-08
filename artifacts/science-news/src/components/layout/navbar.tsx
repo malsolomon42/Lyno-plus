@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, Search, Bookmark, Menu, X, Compass, Info, Heart, Cpu } from "lucide-react";
+import { Moon, Sun, Search, Bookmark, Menu, X, Compass, Info, Heart, Cpu, LogOut, User } from "lucide-react";
 import { AnimatedLogo } from "@/components/animated-logo";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
@@ -8,6 +8,7 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import { ReadingStreak } from "@/components/reading-streak";
 import { NotificationBell } from "@/components/notification-bell";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@workspace/replit-auth-web";
 
 const NAV_LINKS = [
   { href: "/launches", label: "Countdowns" },
@@ -24,9 +25,15 @@ export function Navbar() {
   const { bookmarks } = useBookmarks();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const displayName = user?.firstName
+    ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}`
+    : user?.email?.split("@")[0] ?? "You";
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/80" style={{ WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)" }}>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" data-testid="link-home">
           <AnimatedLogo size="sm" showText={true} />
@@ -88,6 +95,83 @@ export function Navbar() {
             {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </Button>
 
+          {/* User avatar / auth */}
+          {isAuthenticated && (
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 rounded-full h-8 px-2 hover:bg-white/10 transition-colors"
+                aria-label="User menu"
+              >
+                {user?.profileImageUrl ? (
+                  <img
+                    src={user.profileImageUrl}
+                    alt={displayName}
+                    className="w-7 h-7 rounded-full object-cover ring-1 ring-primary/40"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                    style={{ background: "linear-gradient(135deg, #2563eb, #7c3aed)" }}
+                  >
+                    {displayName[0]?.toUpperCase() ?? "U"}
+                  </div>
+                )}
+                <span className="hidden lg:block text-xs font-medium text-foreground/80 max-w-[80px] truncate">
+                  {displayName}
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {userMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.92, y: -4 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-10 w-48 rounded-xl border border-white/10 py-1.5 z-50"
+                    style={{
+                      background: "hsl(222 47% 10% / 0.97)",
+                      WebkitBackdropFilter: "blur(16px)",
+                      backdropFilter: "blur(16px)",
+                      boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    <div className="px-3 py-2 border-b border-white/10 mb-1">
+                      <p className="text-xs font-semibold text-foreground truncate">{displayName}</p>
+                      {user?.email && (
+                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => { setUserMenuOpen(false); logout(); }}
+                      className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Log out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {!isAuthenticated && (
+            <button
+              onClick={() => window.location.href = "/api/login"}
+              className="hidden sm:flex items-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors"
+              style={{
+                background: "linear-gradient(135deg, rgba(37,99,235,0.25), rgba(124,58,237,0.25))",
+                border: "1px solid rgba(99,102,241,0.4)",
+                color: "#a5b4fc",
+              }}
+            >
+              <User className="w-3.5 h-3.5" />
+              Log in
+            </button>
+          )}
+
           <Button
             variant="ghost"
             size="icon"
@@ -106,7 +190,8 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t border-white/10 bg-background/95 backdrop-blur-md overflow-hidden"
+            className="lg:hidden border-t border-white/10 overflow-hidden"
+            style={{ background: "hsl(222 47% 8% / 0.97)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)" }}
           >
             <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
               {NAV_LINKS.map((link) => (
@@ -142,6 +227,24 @@ export function Navbar() {
                 <Heart className="w-4 h-4" />
                 Support lyno+
               </Link>
+              {isAuthenticated && (
+                <button
+                  onClick={() => { setMobileOpen(false); logout(); }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Log out
+                </button>
+              )}
+              {!isAuthenticated && (
+                <button
+                  onClick={() => { setMobileOpen(false); window.location.href = "/api/login"; }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  Log in
+                </button>
+              )}
             </nav>
           </motion.div>
         )}
