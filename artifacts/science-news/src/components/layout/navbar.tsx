@@ -157,20 +157,49 @@ export function Navbar() {
             </div>
           )}
 
-          {!isAuthenticated && (
-            <button
-              onClick={() => window.location.href = "/api/login"}
-              className="hidden sm:flex items-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors"
-              style={{
-                background: "linear-gradient(135deg, rgba(37,99,235,0.25), rgba(124,58,237,0.25))",
-                border: "1px solid rgba(99,102,241,0.4)",
-                color: "#a5b4fc",
-              }}
-            >
-              <User className="w-3.5 h-3.5" />
-              Log in
-            </button>
-          )}
+           {!isAuthenticated && (
+             <div className="relative hidden sm:block">
+               <button
+                 onClick={() => setUserMenuOpen(!userMenuOpen)}
+                 className="flex items-center gap-1.5 rounded-full h-8 px-3 text-xs font-semibold transition-colors"
+                 style={{
+                   background: "linear-gradient(135deg, rgba(37,99,235,0.25), rgba(124,58,237,0.25))",
+                   border: "1px solid rgba(99,102,241,0.4)",
+                   color: "#a5b4fc",
+                 }}
+                 aria-label="Account menu"
+               >
+                 <User className="w-3.5 h-3.5" />
+                 Account
+               </button>
+               <AnimatePresence>
+                 {userMenuOpen && (
+                   <motion.div
+                     initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                     animate={{ opacity: 1, scale: 1, y: 0 }}
+                     exit={{ opacity: 0, scale: 0.92, y: -4 }}
+                     className="absolute right-0 top-10 w-44 rounded-xl border border-white/10 py-1.5 z-50"
+                     style={{ background: "hsl(222 47% 10% / 0.97)", WebkitBackdropFilter: "blur(16px)", backdropFilter: "blur(16px)" }}
+                   >
+                     <button
+                       onClick={() => { setUserMenuOpen(false); window.location.href = "/api/login"; }}
+                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                     >
+                       <User className="w-4 h-4" />
+                       Log in
+                     </button>
+                     <button
+                       onClick={() => { setUserMenuOpen(false); window.location.href = "/api/login"; }}
+                       className="flex items-center gap-2 w-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors"
+                     >
+                       <User className="w-4 h-4" />
+                       Sign up
+                     </button>
+                   </motion.div>
+                 )}
+               </AnimatePresence>
+             </div>
+           )}
 
           <Button
             variant="ghost"
@@ -237,13 +266,22 @@ export function Navbar() {
                 </button>
               )}
               {!isAuthenticated && (
-                <button
-                  onClick={() => { setMobileOpen(false); window.location.href = "/api/login"; }}
-                  className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
-                >
-                  <User className="w-4 h-4" />
-                  Log in
-                </button>
+                 <>
+                   <button
+                     onClick={() => { setMobileOpen(false); window.location.href = "/api/login"; }}
+                     className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                   >
+                     <User className="w-4 h-4" />
+                     Log in
+                   </button>
+                   <button
+                     onClick={() => { setMobileOpen(false); window.location.href = "/api/login"; }}
+                     className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                   >
+                     <User className="w-4 h-4" />
+                     Sign up
+                   </button>
+                 </>
               )}
             </nav>
           </motion.div>

@@ -5,7 +5,7 @@ import { format, differenceInHours } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, ExternalLink, Calendar, Newspaper, Rocket, Bookmark, Clock } from "lucide-react";
+import { ArrowLeft, ExternalLink, Calendar, Newspaper, Rocket, Bookmark, Clock, PlayCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { ReadingProgress } from "@/components/reading-progress";
 import { ShareButtons } from "@/components/share-buttons";
@@ -132,10 +132,10 @@ export default function ArticleDetail() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-8 border-t border-white/10">
+             <div className="flex flex-col sm:flex-row sm:items-center gap-4 pt-8 border-t border-white/10">
               <Button asChild size="lg" className="rounded-full" data-testid="btn-read-full">
-                <a href={article.url} target="_blank" rel="noopener noreferrer">
-                  Read Full Article at Source
+                 <a href="#full-article">
+                   Read Full Article Here
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </a>
               </Button>
@@ -144,6 +144,43 @@ export default function ArticleDetail() {
                 url={typeof window !== "undefined" ? window.location.href : article.url}
               />
             </div>
+
+             <section id="full-article" className="rounded-2xl border border-primary/20 bg-card/60 p-3 md:p-5 scroll-mt-24">
+               <div className="flex items-center justify-between gap-3 px-2 pb-3">
+                 <div>
+                   <h2 className="text-xl font-bold">Full article</h2>
+                   <p className="text-sm text-muted-foreground">Reading view stays inside lyno+.</p>
+                 </div>
+                 <a href={article.url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline">
+                   Open source
+                 </a>
+               </div>
+               <iframe
+                 src={article.url}
+                 title={`Full article: ${article.title}`}
+                 className="w-full min-h-[720px] rounded-xl bg-background border border-white/10"
+                 loading="lazy"
+                 referrerPolicy="no-referrer-when-downgrade"
+               />
+             </section>
+
+             <section className="rounded-2xl border border-white/10 bg-card/50 p-3 md:p-5">
+               <div className="flex items-center gap-3 px-2 pb-3">
+                 <PlayCircle className="w-5 h-5 text-primary" />
+                 <div>
+                   <h2 className="text-xl font-bold">Related videos</h2>
+                   <p className="text-sm text-muted-foreground">Watch science coverage without leaving this page.</p>
+                 </div>
+               </div>
+               <iframe
+                 src={`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${article.title} space science news`)}`}
+                 title={`Related videos for ${article.title}`}
+                 className="w-full aspect-video rounded-xl border border-white/10"
+                 loading="lazy"
+                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                 allowFullScreen
+               />
+             </section>
 
             {/* Article Reader (TTS) */}
             <ArticleReader

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Heart, Rocket, Star, Coffee, Globe, Check, Users, ArrowRight } from "lucide-react";
+import { Heart, Rocket, Star, Coffee, Globe, Check, Users, ArrowRight, Megaphone, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDonations } from "@/hooks/use-engagement";
 import { format } from "date-fns";
+import { useAuth } from "@workspace/replit-auth-web";
 
 const TIERS = [
   {
@@ -57,17 +58,43 @@ const TIERS = [
 ];
 
 export default function Support() {
-  const { donations, totalRaised, progress, goal, donate } = useDonations();
+  const { donations, totalRaised, progress, goal } = useDonations();
+  const { isAuthenticated, login } = useAuth();
   const [selected, setSelected] = useState(TIERS[1]);
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [step, setStep] = useState<"select" | "confirm" | "done">("select");
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [adAmount, setAdAmount] = useState("150");
 
-  const handleDonate = (e: React.FormEvent) => {
+  const startCheckout = async (kind: "support" | "advertising", amount: number) => {
+    if (!isAuthenticated) {
+      login();
+      return;
+    }
+    setCheckoutLoading(true);
+    setCheckoutError("");
+    try {
+      const response = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind, amount }),
+      });
+      const data = await response.json() as { url?: string; error?: string };
+      if (!response.ok || !data.url) throw new Error(data.error || "Unable to start checkout.");
+      window.location.assign(data.url);
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Unable to start checkout.");
+      setCheckoutLoading(false);
+    }
+  };
+
+  const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
-    donate(name.trim(), selected.label, selected.amount, message.trim());
-    setStep("done");
+    await startCheckout("support", selected.amount);
   };
 
   return (
@@ -200,19 +227,20 @@ export default function Support() {
                     data-testid="input-donor-message"
                   />
                 </div>
-                <div className="bg-muted/30 border border-white/5 rounded-xl p-4 text-xs text-muted-foreground leading-relaxed">
-                  This is a simulated donation for demonstration purposes. No real payment is processed.
-                  Your name and message will appear on the supporters wall.
+                 <div className="bg-muted/30 border border-white/5 rounded-xl p-4 text-xs text-muted-foreground leading-relaxed flex gap-2">
+                   <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+                   Secure checkout is handled by Stripe. lyno+ never sees or stores your card number.
                 </div>
+                 {checkoutError && <p className="text-sm text-red-400" role="alert">{checkoutError}</p>}
                 <Button
                   type="submit"
                   size="lg"
                   className="w-full rounded-full gap-2"
-                  disabled={!name.trim()}
+                   disabled={!name.trim() || checkoutLoading}
                   data-testid="btn-confirm-donate"
                 >
                   <Heart className="w-4 h-4" />
-                  Complete ${selected.amount} Support
+                   {checkoutLoading ? "Opening secure checkout..." : `Continue to secure checkout · $${selected.amount}`}
                 </Button>
               </form>
             </motion.div>
@@ -243,6 +271,41 @@ export default function Support() {
                     <div className={`w-11 h-11 rounded-xl ${tier.bg} flex items-center justify-center mb-4`}>
                       <tier.icon className={`w-5 h-5 ${tier.iconColor}`} />
                     </div>
+
+               <div className="mb-16 rounded-2xl border border-cyan-400/20 bg-gradient-to-br from-cyan-500/10 via-card to-primary/5 p-6 md:p-8">
+                 <div className="flex flex-col md:flex-row md:items-center gap-6">
+                   <div className="w-12 h-12 rounded-xl bg-cyan-400/10 border border-cyan-400/20 flex items-center justify-center shrink-0">
+                     <Megaphone className="w-6 h-6 text-cyan-300" />
+                   </div>
+                   <div className="flex-1">
+                     <Badge variant="outline" className="mb-2 border-cyan-400/30 text-cyan-300">Advertising</Badge>
+                     <h2 className="text-2xl font-bold mb-2">Put your message in orbit</h2>
+                     <p className="text-sm text-muted-foreground max-w-2xl">
+                       Support independent science journalism with a sponsored placement. Payments are processed securely by Stripe and paid out through the connected Stripe account.
+                     </p>
+                   </div>
+                   <div className="flex flex-col sm:flex-row gap-3 md:w-auto">
+                     <Input
+                       type="number"
+                       min="25"
+                       step="1"
+                       value={adAmount}
+                       onChange={(event) => setAdAmount(event.target.value)}
+                       className="w-full sm:w-32 rounded-xl bg-background border-white/10"
+                       aria-label="Advertising amount in US dollars"
+                     />
+                     <Button
+                       className="rounded-full gap-2 whitespace-nowrap"
+                       disabled={checkoutLoading}
+                       onClick={() => startCheckout("advertising", Number(adAmount))}
+                     >
+                       <Megaphone className="w-4 h-4" />
+                       {checkoutLoading ? "Opening..." : "Advertise with us"}
+                     </Button>
+                   </div>
+                 </div>
+                 {checkoutError && <p className="text-sm text-red-400 mt-4" role="alert">{checkoutError}</p>}
+               </div>
                     <h3 className="font-bold text-lg mb-0.5">{tier.label}</h3>
                     <p className="text-3xl font-bold mb-2">${tier.amount}</p>
                     <p className="text-xs text-muted-foreground mb-4 flex-1">{tier.perk}</p>
