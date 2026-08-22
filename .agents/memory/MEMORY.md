@@ -1,0 +1,1 @@
+- [Stripe sync migrations](stripe-sync-migrations.md) — bundled API servers must ship stripe-replit-sync migration assets beside the runtime bundle.

@@ -19,10 +19,10 @@ async function getStripeCredentials(): Promise<{ secretKey: string; webhookSecre
   );
   if (!response.ok) throw new Error(`Unable to load Stripe connection: ${response.status}`);
 
-  const data = await response.json() as { items?: Array<{ settings?: { secret_key?: string; webhook_secret?: string } }> };
+  const data = await response.json() as { items?: Array<{ settings?: { secret?: string; publishable?: string; webhook_secret?: string } }> };
   const settings = data.items?.[0]?.settings;
-  if (!settings?.secret_key) throw new Error("Stripe is not connected.");
-  return { secretKey: settings.secret_key, webhookSecret: settings.webhook_secret };
+  if (!settings?.secret) throw new Error("Stripe is not connected.");
+  return { secretKey: settings.secret, webhookSecret: settings.webhook_secret };
 }
 
 export async function getUncachableStripeClient(): Promise<Stripe> {
