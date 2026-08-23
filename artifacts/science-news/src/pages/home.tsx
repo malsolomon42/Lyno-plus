@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useArticles, useBlogs, Article } from "@/hooks/use-space-news";
-import { useDevToArticles } from "@/hooks/use-tech-news";
+import { useTrendingTech } from "@/hooks/use-tech-news";
 import { ArticleGrid } from "@/components/article-grid";
 import { TechCard } from "@/components/tech-card";
 import { Newsletter } from "@/components/newsletter";
@@ -10,12 +10,12 @@ import { PollWidget } from "@/components/poll-widget";
 import { SupportCta } from "@/components/support-cta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe, Cpu } from "lucide-react";
+import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe, Cpu, Activity, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { differenceInHours } from "date-fns";
 
 function TechHomeFeed() {
-  const { data, isLoading } = useDevToArticles(undefined, 6);
+  const { articles: data, isLoading } = useTrendingTech();
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -34,7 +34,7 @@ function TechHomeFeed() {
   }
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {(data || []).map((article, i) => (
+      {(data || []).slice(0, 6).map((article, i) => (
         <TechCard key={article.id} article={article} index={i} />
       ))}
     </div>
@@ -82,8 +82,15 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-16 pb-20">
+      <section className="container mx-auto px-4 pt-8">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-y border-white/10 py-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground font-mono">
+          <span className="flex items-center gap-2 text-primary"><span className="h-2 w-2 rounded-full bg-primary shadow-[0_0_12px_hsl(var(--primary))]" /> Live newsroom</span>
+          <span>Spaceflight News API</span><span>Dev.to</span><span>Hacker News</span><span>GitHub rising</span>
+          <span className="ml-auto hidden sm:flex items-center gap-1.5"><Activity className="h-3.5 w-3.5 text-cyan-300" /> Updated continuously</span>
+        </div>
+      </section>
       {/* Hero */}
-      <section className="relative min-h-[80vh] flex items-end pb-16 pt-32">
+      <section className="relative min-h-[72vh] flex items-end pb-16 pt-24">
         {featuredArticle ? (
           <>
             <div className="absolute inset-0 z-0">
@@ -117,13 +124,14 @@ export default function Home() {
                   </Badge>
                   <span className="text-sm font-mono text-white/60">{featuredArticle.news_site}</span>
                 </div>
+                <div className="flex items-center gap-2 text-primary font-mono text-xs uppercase tracking-[0.22em] mb-4"><Sparkles className="w-4 h-4" /> The signal desk</div>
                 <h1
-                  className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.1]"
+                  className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-[1.04] text-balance"
                   data-testid="hero-title"
                 >
                   {featuredArticle.title}
                 </h1>
-                <p className="text-lg md:text-xl text-white/70 mb-8 max-w-2xl line-clamp-3">
+                <p className="text-lg md:text-xl text-white/70 mb-8 max-w-2xl line-clamp-3 leading-relaxed">
                   {featuredArticle.summary}
                 </p>
                 <Link href={`/article/${featuredArticle.id}`}>
@@ -165,7 +173,7 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <div className="flex items-center gap-3 mb-8 border-b border-white/10 pb-4">
           <Rocket className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Latest Transmissions</h2>
+            <div><p className="text-xs uppercase tracking-[0.2em] font-mono text-primary mb-1">Space desk</p><h2 className="text-2xl md:text-3xl font-bold tracking-tight">Latest Transmissions</h2></div>
           <span className="ml-auto text-xs font-mono text-muted-foreground">
             {articlesData?.count ? `${articlesData.count.toLocaleString()} total` : ""}
           </span>

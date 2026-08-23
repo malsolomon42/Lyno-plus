@@ -7,13 +7,24 @@ export interface TechArticle {
   description: string;
   cover_image: string | null;
   url: string;
-  source: "dev.to" | "hackernews";
+  source: "dev.to" | "hackernews" | "github";
   author: string;
   published_at: string;
   reading_time?: number;
   tags: string[];
   reactions: number;
   comments: number;
+}
+
+interface GitHubRepoRaw {
+  full_name: string;
+  html_url: string;
+  description: string | null;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  owner: { login: string };
+  created_at: string;
 }
 
 // ── Dev.to raw types ───────────────────────────────────────────────────────
@@ -76,6 +87,22 @@ function fromHN(s: HNRaw): TechArticle {
   };
 }
 
+function fromGitHub(repo: GitHubRepoRaw): TechArticle {
+  return {
+    id: `github-${repo.full_name}`,
+    title: repo.full_name,
+    description: repo.description || "A fast-rising open-source project worth watching.",
+    cover_image: null,
+    url: repo.html_url,
+    source: "github",
+    author: repo.owner.login,
+    published_at: repo.created_at,
+    tags: repo.language ? [repo.language.toLowerCase(), "open-source"] : ["open-source"],
+    reactions: repo.stargazers_count,
+    comments: repo.forks_count,
+  };
+}
+
 // ── Query hooks ────────────────────────────────────────────────────────────
 export function useDevToArticles(tag?: string, limit = 12) {
   const url = tag
@@ -111,17 +138,34 @@ export function useHNStories(query?: string, limit = 10) {
   });
 }
 
+export function useGitHubTrending(limit = 8) {
+  return useQuery<TechArticle[]>({
+    queryKey: ["github-trending", limit],
+    queryFn: async () => {
+      const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      const res = await fetch(`https://api.github.com/search/repositories?q=created:>${since}&sort=stars&order=desc&per_page=${limit}`);
+      if (!res.ok) throw new Error("GitHub fetch failed");
+      const data: { items: GitHubRepoRaw[] } = await res.json();
+      return data.items.map(fromGitHub);
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
 // Combined trending: top Dev.to + HN front page interleaved
 export function useTrendingTech() {
   const devto = useDevToArticles(undefined, 10);
   const hn = useHNStories(undefined, 8);
+  const github = useGitHubTrending(6);
   const articles: TechArticle[] = [];
   const dt = devto.data || [];
   const h = hn.data || [];
+  const gh = github.data || [];
   const max = Math.max(dt.length, h.length);
   for (let i = 0; i < max; i++) {
     if (dt[i]) articles.push(dt[i]);
     if (h[i]) articles.push(h[i]);
+    if (gh[i]) articles.push(gh[i]);
   }
-  return { articles, isLoading: devto.isLoading || hn.isLoading };
+  return { articles, isLoading: devto.isLoading || hn.isLoading || github.isLoading };
 }

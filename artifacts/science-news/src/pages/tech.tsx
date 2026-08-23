@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Cpu, Brain, Globe, FlaskConical, Code2, Lightbulb, Flame, ExternalLink } from "lucide-react";
+import { Cpu, Brain, Globe, FlaskConical, Code2, Lightbulb, Flame, ExternalLink, Activity, TrendingUp, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TechCard } from "@/components/tech-card";
 import { motion } from "framer-motion";
-import { useDevToArticles, useHNStories, useTrendingTech } from "@/hooks/use-tech-news";
+import { useDevToArticles, useHNStories, useTrendingTech, useGitHubTrending } from "@/hooks/use-tech-news";
 
 const TABS = [
   { id: "trending", label: "Trending", icon: Flame, devTag: undefined, hnQuery: undefined },
@@ -23,21 +23,39 @@ function TabContent({ tabId }: { tabId: TabId }) {
   const trending = useTrendingTech();
   const devto = useDevToArticles(tab.devTag, 12);
   const hn = useHNStories(tab.hnQuery, 8);
+  const github = useGitHubTrending(6);
 
   if (tabId === "trending") {
     const { articles, isLoading } = trending;
     if (isLoading) return <GridSkeleton />;
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((a, i) => <TechCard key={a.id} article={a} index={i} />)}
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {[
+            { label: "Live sources", value: "03", detail: "Dev.to · HN · GitHub", icon: Activity },
+            { label: "Signal window", value: "7 days", detail: "Freshness weighted", icon: TrendingUp },
+            { label: "Editorial lens", value: "Signal", detail: "Momentum over noise", icon: Sparkles },
+          ].map(item => {
+            const StatIcon = item.icon;
+            return (
+              <div key={item.label} className="rounded-2xl border border-white/10 bg-card/70 p-4 flex items-center gap-3">
+                <div className="rounded-xl bg-primary/10 p-2 text-primary"><StatIcon className="w-4 h-4" /></div>
+                <div><p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-mono">{item.label}</p><p className="font-semibold">{item.value} <span className="text-xs text-muted-foreground font-normal">{item.detail}</span></p></div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((a, i) => <TechCard key={a.id} article={a} index={i} />)}
+        </div>
       </div>
     );
   }
 
-  const isLoading = devto.isLoading || hn.isLoading;
+  const isLoading = devto.isLoading || hn.isLoading || github.isLoading;
   if (isLoading) return <GridSkeleton />;
 
-  const combined = [...(devto.data || []), ...(hn.data || [])];
+  const combined = [...(devto.data || []), ...(hn.data || []), ...(github.data || [])];
 
   return (
     <div className="space-y-12">
@@ -88,6 +106,22 @@ function TabContent({ tabId }: { tabId: TabId }) {
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-orange-400/70 flex-shrink-0 mt-1 transition-colors" />
               </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {github.data && github.data.length > 0 && (
+        <div>
+          <div className="flex items-center gap-2 mb-5">
+            <span className="text-xs font-mono font-bold uppercase tracking-widest text-cyan-300 border border-cyan-500/20 px-2 py-0.5 rounded-full bg-cyan-500/5">
+              GitHub rising
+            </span>
+            <span className="text-xs text-muted-foreground">new repositories with momentum</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {github.data.map((a, i) => (
+              <TechCard key={a.id} article={a} index={i} compact />
             ))}
           </div>
         </div>

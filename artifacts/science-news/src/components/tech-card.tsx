@@ -7,6 +7,7 @@ import { Clock, Heart, MessageSquare, ExternalLink } from "lucide-react";
 const FALLBACKS: Record<string, string> = {
   "dev.to": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop",
   hackernews: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop",
+  github: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?w=800&auto=format&fit=crop",
 };
 
 const TAG_COLORS: Record<string, string> = {
@@ -62,10 +63,12 @@ export function TechCard({ article, index = 0, compact = false }: TechCardProps)
               className={`text-xs border font-mono ${
                 article.source === "dev.to"
                   ? "bg-background/80 text-foreground border-white/15"
-                  : "bg-orange-500/20 text-orange-400 border-orange-500/30"
+                  : article.source === "hackernews"
+                    ? "bg-orange-500/20 text-orange-400 border-orange-500/30"
+                    : "bg-cyan-500/20 text-cyan-300 border-cyan-500/30"
               }`}
             >
-              {article.source === "dev.to" ? "dev.to" : "HN"}
+              {article.source === "dev.to" ? "dev.to" : article.source === "hackernews" ? "HN" : "GitHub"}
             </Badge>
           </div>
           <div className="absolute top-2 right-2">
@@ -81,10 +84,12 @@ export function TechCard({ article, index = 0, compact = false }: TechCardProps)
               className={`text-xs border font-mono ${
                 article.source === "dev.to"
                   ? "bg-muted/50 text-muted-foreground border-white/10"
-                  : "bg-orange-500/10 text-orange-400 border-orange-500/20"
+                  : article.source === "hackernews"
+                    ? "bg-orange-500/10 text-orange-400 border-orange-500/20"
+                    : "bg-cyan-500/10 text-cyan-300 border-cyan-500/20"
               }`}
             >
-              {article.source === "dev.to" ? "dev.to" : "Hacker News"}
+              {article.source === "dev.to" ? "dev.to" : article.source === "hackernews" ? "Hacker News" : "GitHub"}
             </Badge>
             <ExternalLink className="w-3 h-3 text-muted-foreground/50 ml-auto" />
           </div>
