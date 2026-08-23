@@ -123,11 +123,21 @@ export function useNotifications() {
       // Fire browser push for truly new ones
       if (typeof Notification !== "undefined" && Notification.permission === "granted") {
         toAdd.slice(0, 2).forEach(n => {
-          new Notification(`lyno+ · ${n.title}`, {
-            body: n.body,
-            icon: "/favicon.ico",
-            tag: n.id,
-          });
+          // Some embedded preview browsers expose Notification as a non-constructable
+          // shim. Notifications are a progressive enhancement, never a reason to
+          // interrupt the feed or throw during render.
+          try {
+            const BrowserNotification = Notification as typeof window.Notification;
+            if (typeof BrowserNotification === "function") {
+              new BrowserNotification(`lyno+ · ${n.title}`, {
+                body: n.body,
+                icon: "/favicon.ico",
+                tag: n.id,
+              });
+            }
+          } catch {
+            // Keep the in-app notification even when native push is unavailable.
+          }
         });
       }
       return next;

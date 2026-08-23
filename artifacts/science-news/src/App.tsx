@@ -19,6 +19,7 @@ import About from "@/pages/about";
 import Support from "@/pages/support";
 import Launches from "@/pages/launches";
 import Tech from "@/pages/tech";
+import Watch from "@/pages/watch";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/support" component={Support} />
       <Route path="/launches" component={Launches} />
       <Route path="/tech" component={Tech} />
+      <Route path="/watch" component={Watch} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Moon, Sun, Search, Bookmark, Menu, X, Compass, Info, Heart, Cpu, LogOut, User } from "lucide-react";
+import { Moon, Sun, Search, Bookmark, Menu, X, Compass, Info, Heart, Cpu, LogOut, User, Clapperboard } from "lucide-react";
 import { AnimatedLogo } from "@/components/animated-logo";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/lib/theme-provider";
@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { href: "/category/Moon", label: "Moon" },
   { href: "/category/Deep Space", label: "Deep Space" },
   { href: "/tech", label: "Tech & Science", icon: Cpu },
+  { href: "/watch", label: "Watch", icon: Clapperboard },
   { href: "/explore", label: "Explore", icon: Compass },
   { href: "/about", label: "About", icon: Info },
 ];

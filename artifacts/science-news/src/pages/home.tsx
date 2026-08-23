@@ -10,7 +10,8 @@ import { PollWidget } from "@/components/poll-widget";
 import { SupportCta } from "@/components/support-cta";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe, Cpu, Activity, Sparkles } from "lucide-react";
+import { Rocket, ArrowRight, ChevronDown, Telescope, Satellite, Globe, Cpu, Activity, Sparkles, Clapperboard, Play } from "lucide-react";
+import { useExpertVideos } from "@/hooks/use-expert-videos";
 import { motion } from "framer-motion";
 import { differenceInHours } from "date-fns";
 
@@ -57,6 +58,7 @@ export default function Home() {
 
   const { data: articlesData, isLoading: articlesLoading } = useArticles({ limit: PAGE_SIZE + 1, offset: 0 });
   const { data: blogsData, isLoading: blogsLoading } = useBlogs({ limit: 6 });
+  const { data: expertVideos = [] } = useExpertVideos();
 
   const firstPageArticles = articlesData?.results || [];
   const featuredArticle = firstPageArticles[0] ?? null;
@@ -225,6 +227,24 @@ export default function Home() {
           </Link>
         </div>
         <TechHomeFeed />
+      </section>
+
+      <section className="container mx-auto px-4">
+        <div className="rounded-3xl border border-cyan-400/15 bg-gradient-to-br from-cyan-400/10 via-card to-card p-6 md:p-8">
+          <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
+            <div><p className="text-xs uppercase tracking-[.2em] text-cyan-300 font-mono mb-2">The watch desk</p><h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3"><Clapperboard className="w-6 h-6 text-cyan-300" /> Voices worth hearing</h2><p className="text-sm text-muted-foreground mt-2">Fresh thinking from scientists, builders and specialist educators.</p></div>
+            <Link href="/watch"><Button variant="outline" className="rounded-full gap-2">Open video desk <ArrowRight className="w-4 h-4" /></Button></Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {expertVideos.slice(0, 4).map(video => (
+              <a key={video.id} href={video.latestUrl} target="_blank" rel="noopener noreferrer" className="group relative min-h-52 rounded-2xl overflow-hidden border border-white/10">
+                <img src={video.image} alt="" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+                <div className="relative h-full min-h-52 p-4 flex flex-col justify-end"><span className="mb-3 w-fit rounded-full bg-primary text-primary-foreground p-2"><Play className="w-3.5 h-3.5 fill-current" /></span><p className="font-semibold">{video.expert}</p><p className="text-xs text-white/60 mt-1">{video.focus}</p></div>
+              </a>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Community Poll */}
