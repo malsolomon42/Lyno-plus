@@ -28,6 +28,10 @@ app.use(
     },
   }),
 );
+app.get("/", (_req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is live" });
+});
+
 app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   const signature = req.headers["stripe-signature"];
   if (!signature) return res.status(400).json({ error: "Missing stripe-signature" });
