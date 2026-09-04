@@ -21,7 +21,7 @@ async function start() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required.");
   await runMigrations({ databaseUrl: process.env.DATABASE_URL });
   const sync = await getStripeSync();
-  const domain = process.env.REPLIT_DOMAINS?.split(",")[0];
+  const domain = process.env.PUBLIC_DOMAIN;
   if (domain) await sync.findOrCreateManagedWebhook(`https://${domain}/api/stripe/webhook`);
   sync.syncBackfill().catch((error) => logger.error({ error }, "Stripe backfill failed"));
   app.listen(port, (err) => {
